@@ -1,9 +1,8 @@
 # vaptcha-go
  This is a third-party golang SDK for [Vaptcha](https://www.vaptcha.com/document/install.html).
 
-### Quick Usage
+## Quick Usage
 
-#### Captcha
 1. get this module by command line
 
 `go get github.com/Bisstocuz/vaptcha-go`
@@ -13,6 +12,8 @@
 `import "github.com/Bisstocuz/vaptcha-go"`
 
 3. code with this module
+
+#### Captcha
 
 ```
 	result := vaptcha.RequestAndVerify(&vaptcha.CaptchaRequest{
@@ -29,7 +30,7 @@
 
 Result: `true` or `false`
 
-### More Usages
+## More Usages
 You can use separate functions to do more detail works.
 
 #### Captcha
