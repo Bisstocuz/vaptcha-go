@@ -50,7 +50,8 @@ type CaptchaResponse struct {
 	Msg     string `json:"msg"`
 }
 
-// Request will send request to verify server and get response, if server is illegal, returns ErrIllegalServer
+// Request will send request to verify server and get response, if server is illegal, returns ErrIllegalServer,
+// you can use this function alone to handle error details
 func (request *CaptchaRequest) Request() (*CaptchaResponse, error) {
 	// validate server
 	err := request.validateServer()
@@ -86,7 +87,7 @@ func (response *CaptchaResponse) Verify() error {
 	}
 }
 
-// RequestAndVerify will request and verify captcha info, return true if pass
+// RequestAndVerify will request and verify captcha info, return true if pass, otherwise false
 func RequestAndVerify(request *CaptchaRequest) bool {
 	response, err := request.Request()
 	if err != nil {
