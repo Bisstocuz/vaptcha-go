@@ -54,30 +54,30 @@ type CaptchaResponse struct {
 }
 
 // Request will send request to verify server and get response, if server is illegal, returns ErrIllegalServer,
-func (request *CaptchaRequest) Request() *CaptchaResponse {
+func (request *CaptchaRequest) Request() (*CaptchaResponse, error) {
 	// validate server
 	err := request.validateServer()
 	if err != nil {
-		return nil
+		return nil, err
 	}
 	// post request
 	buf := bytes.NewReader(mustToJson(request))
 	resp, err := http.Post(request.Server, "application/json", buf)
 	if err != nil {
-		return nil
+		return nil, err
 	}
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil
+		return nil, err
 	}
 	// bind data to response struct
 	var response CaptchaResponse
 	err = json.Unmarshal(body, &response)
 	if err != nil {
-		return nil
+		return nil, err
 	}
-	return &response
+	return &response, nil
 }
 
 var errMsg = map[string]error{
@@ -112,7 +112,11 @@ func (response *CaptchaResponse) Verify() error {
 
 // RequestAndVerify will request and verify captcha info, return true if pass, otherwise false
 func RequestAndVerify(request *CaptchaRequest) bool {
-	err := request.Request().Verify()
+	resp, err := request.Request()
+	if err != nil {
+		return false
+	}
+	err = resp.Verify()
 	if err != nil {
 		return false
 	}
