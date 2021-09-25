@@ -6,19 +6,23 @@
 
 `go get github.com/Bisstocuz/vaptcha-go`
 
-2. code with this module
+2. import this module
+
+`import "github.com/Bisstocuz/vaptcha-go"`
+
+3. code with this module
 
 ```
-	request := &CaptchaRequest{
+	result := vaptcha.RequestAndVerify(&vaptcha.CaptchaRequest{
 		VID:      "your_captcha_unit_vid",
 		Key:      "your_captcha_unit_key",
-		Server:   "verify_server_link_from_frontend",
+		Server:   "verify_url_from_frontend",
 		Scene:    0,
 		Token:    "token_from_frontend",
 		ClientIP: "client_ip_address",
-	}
-	
-	fmt.Println(RequestAndVerify(request))
+	})
+
+	fmt.Println(result)
 ```
 
 
