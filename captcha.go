@@ -10,15 +10,18 @@ import (
 )
 
 var (
-	ErrIllegalServer = errors.New("illegal server")
-	ErrWrongUserID   = errors.New("userid error")
-	ErrEmptyID       = errors.New("id empty")
-	ErrWrongID       = errors.New("id error")
-	ErrWrongScene    = errors.New("scene error")
-	ErrWrongToken    = errors.New("token error")
-	ErrExpiredToken  = errors.New("token expired")
-	ErrOverrun       = errors.New("frequency overrun")
-	ErrBadRequest    = errors.New("bad request")
+	ErrIllegalServer   = errors.New("illegal server")
+	ErrWrongUserID     = errors.New("userid error")
+	ErrEmptyID         = errors.New("id empty")
+	ErrWrongID         = errors.New("id error")
+	ErrWrongScene      = errors.New("scene error")
+	ErrWrongToken      = errors.New("token error")
+	ErrExpiredToken    = errors.New("token expired")
+	ErrOverrun         = errors.New("frequency overrun")
+	ErrBadRequest      = errors.New("bad request")
+	ErrIllegalParams   = errors.New("params error")
+	ErrUnknown         = errors.New("unknown error")
+	ErrInvalidResponse = errors.New("invalid response")
 )
 
 type CaptchaRequest struct {
@@ -51,49 +54,65 @@ type CaptchaResponse struct {
 }
 
 // Request will send request to verify server and get response, if server is illegal, returns ErrIllegalServer,
-// you can use this function alone to handle error details
-func (request *CaptchaRequest) Request() (*CaptchaResponse, error) {
+func (request *CaptchaRequest) Request() *CaptchaResponse {
 	// validate server
 	err := request.validateServer()
 	if err != nil {
-		return nil, err
+		return nil
 	}
 	// post request
-	buf := bytes.NewReader(mustMarshalToJson(request))
+	buf := bytes.NewReader(mustToJson(request))
 	resp, err := http.Post(request.Server, "application/json", buf)
 	if err != nil {
-		return nil, err
+		return nil
 	}
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, err
+		return nil
 	}
 	// bind data to response struct
 	var response CaptchaResponse
 	err = json.Unmarshal(body, &response)
 	if err != nil {
-		return nil, err
+		return nil
 	}
-	return &response, nil
+	return &response
 }
 
-// Verify will verify the response and return nil if pass, otherwise errors
+var errMsg = map[string]error{
+	"userid error":      ErrWrongUserID,
+	"id empty":          ErrEmptyID,
+	"id error":          ErrWrongID,
+	"scene error":       ErrWrongScene,
+	"token error":       ErrWrongToken,
+	"token expired":     ErrExpiredToken,
+	"frequency overrun": ErrOverrun,
+	"bad request":       ErrBadRequest,
+	"param-error":       ErrIllegalParams,
+}
+
+// Verify will verify the response and return nil if pass, otherwise errors with details
+// For example, ErrWrongUserID, ErrIllegalParams, etc. You can find these errors in defined variables.
 func (response *CaptchaResponse) Verify() error {
+	if response == nil {
+		return ErrInvalidResponse
+	}
 	if response.Success == 1 {
 		return nil
 	} else {
-		return errors.New(response.Msg)
+		v, ok := errMsg[response.Msg]
+		if ok {
+			return v
+		} else {
+			return ErrUnknown
+		}
 	}
 }
 
 // RequestAndVerify will request and verify captcha info, return true if pass, otherwise false
 func RequestAndVerify(request *CaptchaRequest) bool {
-	response, err := request.Request()
-	if err != nil {
-		return false
-	}
-	err = response.Verify()
+	err := request.Request().Verify()
 	if err != nil {
 		return false
 	}

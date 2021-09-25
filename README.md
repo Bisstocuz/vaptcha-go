@@ -25,5 +25,7 @@
 	fmt.Println(result)
 ```
 
+Result: `true` or `false`
+
 ### More Usages
 Check the docs: [pkg.go.dev](https://pkg.go.dev/github.com/Bisstocuz/vaptcha-go)
