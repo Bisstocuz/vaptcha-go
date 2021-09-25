@@ -12,7 +12,7 @@
 	request := &CaptchaRequest{
 		VID:      "your_captcha_unit_vid",
 		Key:      "your_captcha_unit_key",
-		Server:   "https://*.vaptcha.net/verify",
+		Server:   "verify_server_link_from_frontend",
 		Scene:    0,
 		Token:    "token_from_frontend",
 		ClientIP: "client_ip_address",
