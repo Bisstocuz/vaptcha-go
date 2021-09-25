@@ -1,7 +1,9 @@
 # vaptcha-go
- This is a third-party golang SDK for [Vaptcha](https://www.vaptcha.com/).
+ This is a third-party golang SDK for [Vaptcha](https://www.vaptcha.com/document/install.html).
 
 ### Quick Usage
+
+#### Captcha
 1. get this module by command line
 
 `go get github.com/Bisstocuz/vaptcha-go`
@@ -28,4 +30,15 @@
 Result: `true` or `false`
 
 ### More Usages
-Check the docs: [pkg.go.dev](https://pkg.go.dev/github.com/Bisstocuz/vaptcha-go)
+You can use separate functions to do more detail works.
+
+#### Captcha
+1. `CaptchaRequest.Request()`
+
+This function returns struct `CaptchaResponse` and you can access to its internal variables(`Success`,`Score`,`Msg`).
+
+2. `CaptchaResponse.Verify()`
+
+This function returns various errors, you can check out details [here](https://pkg.go.dev/github.com/Bisstocuz/vaptcha-go#pkg-variables).
+
+
