@@ -5,7 +5,7 @@
 
 1. get this module by command line
 
-`go get github.com/Bisstocuz/vaptcha-go`
+`go get -u github.com/Bisstocuz/vaptcha-go`
 
 2. import this module
 
